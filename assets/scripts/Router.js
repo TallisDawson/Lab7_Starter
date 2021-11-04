@@ -24,6 +24,12 @@ export class Router {
      * TODO Part 1
      * Fill in this function as specified in the comment above
      */
+    
+    this.navigate('home', false);
+    document.querySelector('.section--recipe-cards').classList.add('shown');
+    
+    //this.home = homeFunc;
+
   }
 
   /**
@@ -38,6 +44,12 @@ export class Router {
      * TODO Part 1
      * Fill in this function as specified in the comment above
      */
+
+    //Tallis added:
+    
+   
+
+
   }
 
   /**
@@ -52,5 +64,7 @@ export class Router {
      * TODO Part 1
      * Fill in this function as specified in the comment above
      */
+
+    //only place to pushstate()
   }
 }

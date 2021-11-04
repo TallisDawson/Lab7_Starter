@@ -22,6 +22,10 @@ const router = new Router(function () {
    * are removing any "shown" classes on <sections> you don't want to display, this home method should
    * be called more than just at the start. You should only really need two lines for this function.
    */
+
+  //Tallis added:
+  //document.querySelector('.section--recipe-cards').classList.add('shown');
+
 });
 
 window.addEventListener('DOMContentLoaded', init);
@@ -109,6 +113,15 @@ function createRecipeCards() {
      * Again - the functions here should be swapping around the "shown" class only, simply
      * add this class to the correct <section> to display that section
      */
+
+    //const addPage = new Router(function () {});
+
+    //Tallis added:
+    //recipeCard.addPage(recipeCard.data['page-name'], );
+    bindRecipeCard(recipeCard, recipeCard.data['page-name']);
+    recipeCard.classList.add('shown');
+    //
+
     if (i >= 3) recipeCard.classList.add('hidden');
     document.querySelector('.recipe-cards--wrapper').appendChild(recipeCard);
   }
@@ -154,6 +167,12 @@ function bindRecipeCard(recipeCard, pageName) {
    * TODO - Part 1
    * Fill in this function as specified in the comment above
    */
+
+  //Tallis added
+  recipeCard.addEventListener('click', event => {
+    router.navigate(pageName, false); // !!!! not sure of this
+  });
+  //
 }
 
 /**
@@ -165,6 +184,11 @@ function bindEscKey() {
    * TODO - Part 1
    * Fill in this function as specified in the comment above
    */
+  //Tallis added:
+  document.addEventListener('keydown', event => {
+    console.log('a');
+  //
+  })
 }
 
 /**
