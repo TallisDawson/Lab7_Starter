@@ -1,7 +1,6 @@
 // router.js
 
 /** Some hints for this router:
-  *   - it shouldn't be a terribly long file, each function is pretty short.
   *   - the functions being passed in should mostly be stored so that
   *     you can call them later when you want to navigate to a page
   *   - you should be pushing to history (only when the 'popstate' event
@@ -13,6 +12,8 @@
   */
 
 export class Router {
+  static routes = {};
+
   /**
    * Sets up the home function, the page name should always be 'home', which
    * is why no page name variable is passed in.
@@ -24,12 +25,8 @@ export class Router {
      * TODO Part 1
      * Fill in this function as specified in the comment above
      */
-    
-    this.navigate('home', false);
-    document.querySelector('.section--recipe-cards').classList.add('shown');
-    
-    //this.home = homeFunc;
 
+    this['home'] = homeFunc;
   }
 
   /**
@@ -41,14 +38,13 @@ export class Router {
    */
   addPage(page, pageFunc) {
     /**
-     * TODO Part 1
-     * Fill in this function as specified in the comment above
+     * TODO Part 1 - Step 2
+     * Just like in the constructor above, store the pageFunc variable inside this
+     * router instance using the 'this' keyword. Substitute 'home' for the variable
+     * page
      */
-
-    //Tallis added:
     
-   
-
+    this[page]=pageFunc;
 
   }
 
@@ -60,11 +56,50 @@ export class Router {
    *                              'popstate' event instead of a normal card click
    */
   navigate(page, statePopped) {
+    console.log(`navigate() function called, requested page: ${page}`);
     /**
-     * TODO Part 1
-     * Fill in this function as specified in the comment above
+     * TODO - Part 1 - Step 4
+     * Now, we are going to call the functions that we stored earlier based on 
+     * what page is being requested. For this function:
+     * 
+     *  1. First, check to see if the function exists, if it doesn't log an error
+     *     and return out of the function. 'this' is a global variable, so you can 
+     *     check to see if it exists nearly the same way you assigned it
+     *  2. Create a variable called hash. If page == 'home' set hash to be an empty
+     *     string, if page is anything else set it to be the string '#' + page, e.g.
+     *     '#ghostCookies'
+     *  3. Next, if statePopped is false and window.location.hash does NOT match the
+     *     hash that you just made, use history.pushState() to add the current state
+     *     and URL + hash to history
+     *  4. Finally, call the stored function for the given page
      */
 
     //only place to pushstate()
+    if(this[page] == undefined) {
+      console.log('no page exists');
+      return;
+    }
+    
+
+    var hash;
+
+    if(this[page] == 'home') {
+      hash = "";
+    }
+    else{
+      hash = '#' + page;
+    }
+
+    console.log('url hash :' + window.location.origin);
+    console.log(window.location.hash + ' vs hash: ' + hash + ' state pop: ' + statePopped);
+
+    if(statePopped == false && window.location.hash != hash) {
+      history.pushState({page: page}, '', window.location.origin + hash);
+      window.location.hash = hash;
+      console.log(history.state);                           
+    }
+
+    this[page]();
+
   }
 }

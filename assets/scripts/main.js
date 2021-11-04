@@ -14,17 +14,22 @@ const recipeData = {} // You can access all of the Recipe Data from the JSON fil
 
 const router = new Router(function () {
   /** 
-   * TODO - Part 1
-   * fill in the function to display the home page.
-   * This should be straight forward, functions here should be swapping around the "shown" class only,
-   * which was given to you in the CSS. Simply add / remove this class to the corresponding <section> 
-   * elements to display / hide that section. Everything is hidden by default. Make sure that you 
-   * are removing any "shown" classes on <sections> you don't want to display, this home method should
-   * be called more than just at the start. You should only really need two lines for this function.
+   * TODO - Part 1 - Step 1
+   * Select the 'section.section--recipe-cards' element and add the "shown" class
+   * Select the 'section.section--recipe-expand' element and remove the "shown" class
+   * 
+   * You should be using DOM selectors such as document.querySelector() and
+   * class modifications with the classList API (e.g. element.classList.add(),
+   * element.classList.remove())
+   * 
+   * This will only be two single lines
+   * If you did this right, you should see the recipe cards just like last lab
    */
 
   //Tallis added:
-  //document.querySelector('.section--recipe-cards').classList.add('shown');
+  document.querySelector('section.section--recipe-cards').classList.add('shown');
+  document.querySelector('section.section--recipe-expand').classList.remove('shown');
+  history.pushState({page: 'home'}, '');
 
 });
 
@@ -45,13 +50,6 @@ async function init() {
   bindShowMore();
   bindEscKey();
   bindPopstate();
-
-  // Everything starts hidden so load the initial page.
-  // This allows the page to be reloaded and maintain the current page, as well
-  // as minimizes the amount of "page flashing" from the home --> new page
-  let page = window.location.hash.slice(1);
-  if (page == '') page = 'home';
-  router.navigate(page);
 }
 
 /**
@@ -60,9 +58,10 @@ async function init() {
  */
 function initializeServiceWorker() {
   /**
-   *  TODO - Part 2
+   *  TODO - Part 2 Step 1
    *  Initialize the service worker set up in sw.js
    */
+  
 }
 
 /**
@@ -114,17 +113,53 @@ function createRecipeCards() {
      * add this class to the correct <section> to display that section
      */
 
-    //const addPage = new Router(function () {});
-
     //Tallis added:
-    //recipeCard.addPage(recipeCard.data['page-name'], );
-    bindRecipeCard(recipeCard, recipeCard.data['page-name']);
+    const page = recipeData[recipes[i]]['page-name'];
+    router.addPage(page, function() {
+      document.querySelector('.section--recipe-cards').classList.remove('shown');
+      document.querySelector('.section--recipe-expand').classList.add('shown');
+      document.querySelector('recipe-expand').data = recipeData[recipes[i]];
+    });
+
+    bindRecipeCard(recipeCard, page);
     recipeCard.classList.add('shown');
     //
 
     if (i >= 3) recipeCard.classList.add('hidden');
     document.querySelector('.recipe-cards--wrapper').appendChild(recipeCard);
   }
+  /******TA ADDED NOTES */
+  // // Makes a new recipe card
+  // const recipeCard = document.createElement('recipe-card');
+  // // Inputs the data for the card. This is just the first recipe in the recipes array,
+  // // being used as the key for the recipeData object
+  // recipeCard.data = recipeData[recipes[0]];
+
+  // // This gets the page name of each of the arrays - which is basically
+  // // just the filename minus the .json. Since this is the first element
+  // // in our recipes array, the ghostCookies URL, we will receive the .json
+  // // for that ghostCookies URL since it's a key in the recipeData object, and
+  // // then we'll grab the 'page-name' from it - in this case it will be 'ghostCookies'
+  // const page = recipeData[recipes[0]]['page-name'];
+  // router.addPage(page, function() {
+  //   document.querySelector('.section--recipe-cards').classList.remove('shown');
+  //   document.querySelector('.section--recipe-expand').classList.add('shown');
+  //   document.querySelector('recipe-expand').data = recipeData[recipes[0]];
+  // });
+  // bindRecipeCard(recipeCard, page);
+
+  // document.querySelector('.recipe-cards--wrapper').appendChild(recipeCard);
+
+  // /**
+  //  * TODO - Part 1 - Step 3
+  //  * Above I made an example card and added a route for the recipe at index 0 in
+  //  * the recipes array. First, please read through the code in this function to
+  //  * understand what it is doing. Then, turn this into a for loop to iterate over 
+  //  * all the recipes. (bonus - add the class 'hidden' to every recipe card with 
+  //  * an index greater  than 2 in your for loop to make show more button functional)
+  //  */
+
+  
 }
 
 /**
@@ -163,16 +198,10 @@ function bindShowMore() {
  * @param {String} pageName the name of the page to navigate to on click
  */
 function bindRecipeCard(recipeCard, pageName) {
-  /**
-   * TODO - Part 1
-   * Fill in this function as specified in the comment above
-   */
-
-  //Tallis added
-  recipeCard.addEventListener('click', event => {
-    router.navigate(pageName, false); // !!!! not sure of this
+  recipeCard.addEventListener('click', e => {
+    if (e.path[0].nodeName == 'A') return;
+    router.navigate(pageName, false);
   });
-  //
 }
 
 /**
@@ -181,14 +210,18 @@ function bindRecipeCard(recipeCard, pageName) {
  */
 function bindEscKey() {
   /**
-   * TODO - Part 1
-   * Fill in this function as specified in the comment above
+   * TODO - Part 1 Step 5
+   * For this step, add an event listener to document for the 'keydown' event,
+   * if the escape key is pressed, use your router to navigate() to the 'home'
+   * page. This will let us go back to the home page from the detailed page.
    */
   //Tallis added:
   document.addEventListener('keydown', event => {
-    console.log('a');
-  //
-  })
+    if(event.key == "Escape") {
+      router.navigate('home', false);
+    }
+
+  });
 }
 
 /**
@@ -200,7 +233,38 @@ function bindEscKey() {
  */
 function bindPopstate() {
   /**
-   * TODO - Part 1
-   * Fill in this function as specified in the comment above
+   * TODO - Part 1 Step 6
+   * Finally, add an event listener to the window object for the 'popstate'
+   * event - this fires when the forward or back buttons are pressed in a browser.
+   * If your event has a state object that you passed in, navigate to that page,
+   * otherwise navigate to 'home'.
+   * 
+   * IMPORTANT: Pass in the boolean true as the second argument in navigate() here
+   * so your navigate() function does not add your going back action to the history,
+   * creating an infinite loop
    */
+
+  window.onpopstate = popstatefunc;
+
+  function popstatefunc() {
+
+    if(history.state != null){
+      router.navigate(history.state.page, true);
+    }
+    else{
+      router.navigate('home', true);
+    }
+  } 
+
+  // document.addEventListener('popstate', event => {
+  //   console.log('event.state');
+
+  //   if(history.state.page != home){
+  //     router.navigate(history.state.page, true);
+  //   }
+  //   else{
+  //     router.navigate('home', true);
+  //   }
+  // })
+
 }
