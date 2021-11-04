@@ -48,6 +48,7 @@ export class Router {
 
   }
 
+
   /**
    * Changes the page visually to the page that has been passed in. statePopped
    * is used to avoid pushing a new history state on back/forward button presses
@@ -74,29 +75,25 @@ export class Router {
      *  4. Finally, call the stored function for the given page
      */
 
-    //only place to pushstate()
-    if(this[page] == undefined) {
+    if(this[page] == 'undefined') {
       console.log('no page exists');
       return;
     }
-    
 
-    var hash;
-
-    if(this[page] == 'home') {
+    let hash;
+    if(page == 'home') {
       hash = "";
     }
-    else{
+    else {
       hash = '#' + page;
     }
 
-    console.log('url hash :' + window.location.origin);
-    console.log(window.location.hash + ' vs hash: ' + hash + ' state pop: ' + statePopped);
+    console.log('outside loop hash test' + window.location.hash);
 
     if(statePopped == false && window.location.hash != hash) {
-      history.pushState({page: page}, '', window.location.origin + hash);
-      window.location.hash = hash;
-      console.log(history.state);                           
+      console.log('inloop hash value ' + hash);
+      history.pushState({'p': page}, '', window.location + hash);
+      console.log('inside loop hash test' + window.location.hash);                          
     }
 
     this[page]();

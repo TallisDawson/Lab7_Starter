@@ -29,7 +29,6 @@ const router = new Router(function () {
   //Tallis added:
   document.querySelector('section.section--recipe-cards').classList.add('shown');
   document.querySelector('section.section--recipe-expand').classList.remove('shown');
-  history.pushState({page: 'home'}, '');
 
 });
 
@@ -50,6 +49,8 @@ async function init() {
   bindShowMore();
   bindEscKey();
   bindPopstate();
+
+
 }
 
 /**
@@ -244,27 +245,39 @@ function bindPopstate() {
    * creating an infinite loop
    */
 
-  window.onpopstate = popstatefunc;
-
-  function popstatefunc() {
-
-    if(history.state != null){
-      router.navigate(history.state.page, true);
-    }
-    else{
+  window.onpopstate = function(e) {
+    console.log(e.state);
+    if(e.state == null){
       router.navigate('home', true);
     }
-  } 
+    else{
+      router.navigate(e.state.p, true);
+    }
+    
+  };
 
-  // document.addEventListener('popstate', event => {
-  //   console.log('event.state');
+  // function popstatefunc() {
 
-  //   if(history.state.page != home){
-  //     router.navigate(history.state.page, true);
+  //   console.log('in popstatefunc state is:');
+  //   console.log(history.state);
+
+  //   if(history.state != null){
+  //     router.navigate(history.state.p, true);
   //   }
   //   else{
   //     router.navigate('home', true);
   //   }
+  // } 
+
+  // document.addEventListener('popstate', event => {
+  //   console.log('event.state');
+
+  // //   if(history.state.page != home){
+  // //     router.navigate(history.state.page, true);
+  // //   }
+  // //   else{
+  // //     router.navigate('home', true);
+  // //   }
   // })
 
 }
