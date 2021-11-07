@@ -11,7 +11,7 @@
   *     easily modify the URL without refreshing the page or anything
   */
 
-export class Router {
+ export class Router {
   static routes = {};
 
   /**
@@ -92,7 +92,7 @@ export class Router {
 
     if(statePopped == false && window.location.hash != hash) {
       console.log('inloop hash value ' + hash);
-      history.pushState({'p': page}, '', window.location + hash);
+      history.pushState({'p': page}, '', window.location.origin + hash);
       console.log('inside loop hash test' + window.location.hash);                          
     }
 
